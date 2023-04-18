@@ -35,9 +35,6 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/api/v1/users", (req, res) => {
-  res.render("lgin");
-});
 /** All routes */
 app.use("/profile", profileRoute);
 app.use("/api/v1/users", facebookRoute);
@@ -46,7 +43,7 @@ app.use("/api/v1/users", authRoute);
 
 /** Domain Route */
 app.get("/", (req, res) => {
-  res.render("home");
+  res.send("Hello World");
 });
 
 /* Handling unknown route */
