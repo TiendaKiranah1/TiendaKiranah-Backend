@@ -4,6 +4,9 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 
+/**Imported Error Handler */
+const errorController = require("./controllers/errorController/errorController");
+
 /** Imported route files */
 const googleAuth = require("./util/socials/googleAuth");
 const authRoute = require("./routes/authRoute");
@@ -51,16 +54,20 @@ app.use((req, res, next) => {
 app.use("/profile", profileRoute);
 app.use("/api/v1/users", facebookRoute);
 app.use("/api/v1/users", googleRoute);
-app.use("/api/v1/users", authRoute);
+app.use("/api/v1/auth/users", authRoute);
 
 /** Domain Route */
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.status(200).json({
+    message: "Hello World"
+  });
 });
 
 /* Handling unknown route */
 app.all("*", (req, res, next) => {
   next(new CustomError(`Can't find ${req.originalUrl} on the server`, 404));
 });
+
+app.use(errorController);
 
 module.exports = app;

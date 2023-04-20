@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
 
-const mail = async function (email, msg) {
+const mail = async function (email, subject, msg) {
   let transport = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
@@ -20,7 +20,7 @@ const mail = async function (email, msg) {
   let mailOptions = {
     from: `"Bertin" <${process.env.EMAIL}>`,
     to: email,
-    subject: "Thanks For Registering with Us",
+    subject: subject,
     text: msg,
     html: msg
   };

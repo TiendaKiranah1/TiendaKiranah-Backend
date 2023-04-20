@@ -28,7 +28,8 @@ exports.signup = async (req, res, next) => {
       expiresIn: process.env.EXPIRES_IN
     });
     const msg = `Dear ${name}, Welcome To Kiranah Store! I hope you enjoy shopping with us.`;
-    await mail(email, msg);
+    const subject = "Thanks for registring with us.";
+    await mail(email, subject, msg);
     return res.status(201).json({
       status: "Success",
       token
@@ -104,7 +105,9 @@ exports.forgotPassword = async (req, res, next) => {
       "host"
     )}/api/v1/users/resetPassword/${resetToken}`;
 
-    await mail(user.email, resetURL);
+    const subject = "Your token is valid for only 10 minutes";
+
+    await mail(user.email, subject, resetURL);
 
     return res.status(200).json({
       status: "success",
