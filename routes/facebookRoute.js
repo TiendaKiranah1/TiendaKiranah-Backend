@@ -10,7 +10,6 @@ router.get("/auth/facebook", passport.authenticate("facebook"));
 router.get(
   "/auth/facebook/redirect",
   passport.authenticate("facebook", {
-    successRedirect: "/profile",
     failureRedirect: "/api/v1/users/"
   }),
   function (req, res) {

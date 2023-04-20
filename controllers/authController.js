@@ -1,9 +1,12 @@
 const express = require("express");
 const { promisify } = require("util");
+const crypto = require("crypto");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const CustomError = require("../util/customError");
 const mail = require("../util/email");
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 
 exports.signup = async (req, res, next) => {
   try {
@@ -24,7 +27,8 @@ exports.signup = async (req, res, next) => {
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.EXPIRES_IN
     });
-    await mail(email);
+    const msg = `Dear ${name}, Welcome To Kiranah Store! I hope you enjoy shopping with us.`;
+    await mail(email, msg);
     return res.status(201).json({
       status: "Success",
       token
@@ -113,4 +117,28 @@ exports.forgotPassword = async (req, res, next) => {
       await user.save({ validateBeforeSave: false });
     return next(new CustomError("There is an error. Try again", 500));
   }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  const hashToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+  const user = await User.findOne({
+    resetPasswordToken: hashToken,
+    passwordTokenExpire: { $gt: Date.now() }
+  });
+  if (!user) {
+    return next(new CustomError("Token is invalid or has expired"));
+  }
+  user.password = req.body.password;
+  (user.resetPasswordToken = undefined), (user.passwordTokenExpire = undefined);
+  await user.save();
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.EXPIRES_IN
+  });
+  res.status(200).json({
+    status: "success",
+    token
+  });
 };
