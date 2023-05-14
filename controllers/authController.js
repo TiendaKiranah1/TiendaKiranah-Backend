@@ -91,57 +91,57 @@ exports.authorizedRoute = async (req, res, next) => {
   return next();
 };
 
-exports.forgotPassword = async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) {
-    return next(new CustomError("There is no user with the email!", 401));
-  }
+// exports.forgotPassword = async (req, res, next) => {
+//   const user = await User.findOne({ email: req.body.email });
+//   if (!user) {
+//     return next(new CustomError("There is no user with the email!", 401));
+//   }
 
-  const resetToken = user.createResetToken();
-  await user.save({ validateBeforeSave: false });
+//   const resetToken = user.createResetToken();
+//   await user.save({ validateBeforeSave: false });
 
-  try {
-    const resetURL = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/users/resetPassword/${resetToken}`;
+//   try {
+//     const resetURL = `${req.protocol}://${req.get(
+//       "host"
+//     )}/api/v1/users/resetPassword/${resetToken}`;
 
-    const subject = "Your token is valid for only 10 minutes";
+//     const subject = "Your token is valid for only 10 minutes";
 
-    await mail(user.email, subject, resetURL);
+//     await mail(user.email, subject, resetURL);
 
-    return res.status(200).json({
-      status: "success",
-      message: "Token sent to email"
-    });
-  } catch (error) {
-    console.log(error);
-    (user.resetPasswordToken = undefined),
-      (user.passwordTokenExpire = undefined),
-      await user.save({ validateBeforeSave: false });
-    return next(new CustomError("There is an error. Try again", 500));
-  }
-};
+//     return res.status(200).json({
+//       status: "success",
+//       message: "Token sent to email"
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     (user.resetPasswordToken = undefined),
+//       (user.passwordTokenExpire = undefined),
+//       await user.save({ validateBeforeSave: false });
+//     return next(new CustomError("There is an error. Try again", 500));
+//   }
+// };
 
-exports.resetPassword = async (req, res, next) => {
-  const hashToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
-  const user = await User.findOne({
-    resetPasswordToken: hashToken,
-    passwordTokenExpire: { $gt: Date.now() }
-  });
-  if (!user) {
-    return next(new CustomError("Token is invalid or has expired"));
-  }
-  user.password = req.body.password;
-  (user.resetPasswordToken = undefined), (user.passwordTokenExpire = undefined);
-  await user.save();
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.EXPIRES_IN
-  });
-  res.status(200).json({
-    status: "success",
-    token
-  });
-};
+// exports.resetPassword = async (req, res, next) => {
+//   const hashToken = crypto
+//     .createHash("sha256")
+//     .update(req.params.token)
+//     .digest("hex");
+//   const user = await User.findOne({
+//     resetPasswordToken: hashToken,
+//     passwordTokenExpire: { $gt: Date.now() }
+//   });
+//   if (!user) {
+//     return next(new CustomError("Token is invalid or has expired"));
+//   }
+//   user.password = req.body.password;
+//   (user.resetPasswordToken = undefined), (user.passwordTokenExpire = undefined);
+//   await user.save();
+//   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//     expiresIn: process.env.EXPIRES_IN
+//   });
+//   res.status(200).json({
+//     status: "success",
+//     token
+//   });
+// };
