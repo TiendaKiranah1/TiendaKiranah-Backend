@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
+const CustomError = require("./customError");
 
 dotenv.config({ path: "./config.env" });
 
@@ -26,5 +27,4 @@ const mail = async function (email, subject, msg) {
   };
   await transport.sendMail(mailOptions);
 };
-
 module.exports = mail;
