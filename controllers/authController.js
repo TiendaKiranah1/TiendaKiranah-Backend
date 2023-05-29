@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const CustomError = require("../util/customError");
 const mail = require("../util/email");
 const dotenv = require("dotenv");
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "../config.env" });
 
 exports.signup = async (req, res, next) => {
   try {
