@@ -24,7 +24,7 @@ const CustomError = require("./util/customError");
 const app = express();
 
 app.use(morgan("dev"));
-app.set("view engine", "ejs");
+// app.set("view engine", "ejs");
 app.use(
   cookieSession({
     name: "session",
@@ -59,7 +59,7 @@ app.use("/api/v1/auth/users", authRoute);
 /** Domain Route */
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "Hello World"
+    message: "Hello Souvik"
   });
 });
 

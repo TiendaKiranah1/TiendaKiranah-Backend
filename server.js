@@ -19,6 +19,6 @@ mongoose
     console.log(e.message);
   });
 
-app.listen(port, "localhost", () => {
+app.listen(port, () => {
   console.log(`App running on port: ${port}...`);
 });
